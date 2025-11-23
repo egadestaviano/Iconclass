@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Auth\User;
+use App\Models\RecentlyViewedCourse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
@@ -201,6 +202,22 @@ class Course extends Model
             $status = true;
         }
         return $status;
+    }
+
+    /**
+     * Track when a user views this course
+     */
+    public function trackView()
+    {
+        if (auth()->check()) {
+            $userId = auth()->id();
+            
+            // Update or create the recently viewed record
+            RecentlyViewedCourse::updateOrCreate(
+                ['user_id' => $userId, 'course_id' => $this->id],
+                ['viewed_at' => now()]
+            );
+        }
     }
 
     public function item()

@@ -199,6 +199,16 @@ class User extends Authenticatable implements MessageableInterface
         return $bundles;
     }
 
+    /**
+     * Get recently viewed courses
+     */
+    public function recentlyViewedCourses()
+    {
+        return $this->hasMany(\App\Models\RecentlyViewedCourse::class)
+            ->with('course')
+            ->orderBy('viewed_at', 'desc')
+            ->limit(10);
+    }
 
     public function purchases(){
         $orders = Order::where('status','=',1)

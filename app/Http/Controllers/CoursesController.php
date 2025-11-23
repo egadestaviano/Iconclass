@@ -76,6 +76,10 @@ class CoursesController extends Controller
         if(($course->published == 0) && ($purchased_course == false)){
             abort(404);
         }
+        
+        // Track this course view
+        $course->trackView();
+        
         $course_rating = 0;
         $total_ratings = 0;
         $completed_lessons = "";

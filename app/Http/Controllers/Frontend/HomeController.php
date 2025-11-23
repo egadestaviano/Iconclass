@@ -21,6 +21,7 @@ use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Newsletter;
+use Exception;
 
 /**
  * Class HomeController.
@@ -91,6 +92,12 @@ class HomeController extends Controller
 
         $reasons = Reason::where('status', '=', 1)->orderBy('created_at', 'desc')->get();
 
+        // Get recently viewed courses for authenticated users
+        $recently_viewed_courses = collect();
+        if (auth()->check()) {
+            $recently_viewed_courses = auth()->user()->recentlyViewedCourses->pluck('course');
+        }
+
         if ((int)config('counter') == 1) {
             $total_students = config('total_students');
             $total_courses = config('total_courses');
@@ -104,7 +111,7 @@ class HomeController extends Controller
         }
 
         $categories = Category::get();
-        return view($this->path . '.index-' . config('theme_layout'), compact('popular_courses', 'featured_courses', 'sponsors', 'total_students', 'total_courses', 'total_teachers', 'testimonials', 'news', 'trending_courses', 'teachers', 'faqs', 'course_categories', 'reasons', 'sections','categories'));
+        return view($this->path . '.index-' . config('theme_layout'), compact('popular_courses', 'featured_courses', 'sponsors', 'total_students', 'total_courses', 'total_teachers', 'testimonials', 'news', 'trending_courses', 'teachers', 'faqs', 'course_categories', 'reasons', 'sections','categories', 'recently_viewed_courses'));
     }
 
     public function getFaqs()
